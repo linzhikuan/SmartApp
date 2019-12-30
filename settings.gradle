@@ -1,0 +1,2 @@
+include ':app',':smartviewgroup'
+rootProject.name='SmartApp'
