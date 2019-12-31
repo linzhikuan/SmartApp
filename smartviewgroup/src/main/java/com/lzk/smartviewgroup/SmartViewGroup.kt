@@ -130,6 +130,8 @@ class SmartViewGroup : ViewGroup {
     fun getTouchView(x: Float, y: Float): View? {
         for (i in childCount - 1 downTo 0) {
             val child = getChildAt(i)
+            if (touchView != null && touchView == child)
+                continue
             if (child.visibility != View.GONE) {
                 val rect = Rect(child.left, child.top, child.right, child.bottom)
                 if (rect.contains(x.toInt(), y.toInt())) {
