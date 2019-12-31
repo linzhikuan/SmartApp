@@ -115,11 +115,11 @@ class SmartViewGroup : ViewGroup {
             ?: super.dispatchTouchEvent(ev)
     }
 
-    fun getTouchManager(view: View): ViewHolderManager<Any> {
+    fun getTouchManager(view: View): ViewHolderManager<Any>? {
         return itemTypeManager.getViewHolderManager(viewMap[view])
     }
 
-    fun getTouchManager(x: Float, y: Float): ViewHolderManager<Any> {
+    fun getTouchManager(x: Float, y: Float): ViewHolderManager<Any>? {
         val view: View? = getTouchView(x, y)
         return itemTypeManager.getViewHolderManager(viewMap[view])
     }
