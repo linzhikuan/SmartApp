@@ -25,9 +25,9 @@ class SmartViewGroup : ViewGroup {
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-            context,
-            attrs,
-            defStyleAttr
+        context,
+        attrs,
+        defStyleAttr
     )
 
     private fun myLog(msg: String) {
@@ -104,11 +104,27 @@ class SmartViewGroup : ViewGroup {
                 touchViewManager?.onActionCancle(this, x, y, touchView!!)
             }
         }
-        return touchViewManager?.run { isIntercept(thisView, x, y, touchView!!) || enbleAreaInnerBase?.inarea(x, y) ?: true }
-                ?: super.dispatchTouchEvent(ev)
+        return touchViewManager?.run {
+            isIntercept(
+                thisView,
+                x,
+                y,
+                touchView!!
+            ) || enbleAreaInnerBase?.inarea(x, y) ?: true
+        }
+            ?: super.dispatchTouchEvent(ev)
     }
 
-    private fun getTouchView(x: Float, y: Float): View? {
+    fun getTouchManager(view: View): ViewHolderManager<Any> {
+        return itemTypeManager.getViewHolderManager(viewMap[view])
+    }
+
+    fun getTouchManager(x: Float, y: Float): ViewHolderManager<Any> {
+        val view: View? = getTouchView(x, y)
+        return itemTypeManager.getViewHolderManager(viewMap[view])
+    }
+
+    fun getTouchView(x: Float, y: Float): View? {
         for (i in childCount - 1 downTo 0) {
             val child = getChildAt(i)
             if (child.visibility != View.GONE) {
