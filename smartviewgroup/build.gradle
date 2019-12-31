@@ -10,7 +10,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 29
         versionCode 2
-        versionName "1.0.1"
+        versionName "1.0.3"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
@@ -49,7 +49,7 @@ def siteUrl = 'https://github.com/linzhikuan/SmartApp' // 项目主页。
 def gitUrl = 'https://github.com/linzhikuan/SmartApp.git' // Git仓库的url。
 
 group = "com.lzk.smartviewgroup"// 唯一包名,比如compile 'com.ansen.http:okhttpencapsulation:1.0.1'中的com.ansen.http就是这里配置的。
-version = "1.0.1"//项目引用的版本号，比如compile 'com.ansen.http:okhttpencapsulation:1.0.1'中的1.0.1就是这里配置的。
+version = "1.0.3"//项目引用的版本号，比如compile 'com.ansen.http:okhttpencapsulation:1.0.1'中的1.0.1就是这里配置的。
 
 install {
     repositories.mavenInstaller {

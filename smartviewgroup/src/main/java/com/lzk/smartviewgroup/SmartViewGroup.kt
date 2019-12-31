@@ -38,7 +38,10 @@ class SmartViewGroup : ViewGroup {
         itemTypeManager.register(cls, manager)
     }
 
+
     override fun onLayout(p0: Boolean, p1: Int, p2: Int, p3: Int, p4: Int) {
+        if (!p0)
+            return
         for (i in 0 until childCount) {
             val view = getChildAt(i)
             if (view.visibility != View.GONE) {
