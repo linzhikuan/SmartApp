@@ -16,6 +16,7 @@ class SmartViewGroup : ViewGroup {
     private val itemTypeManager: ItemTypeManager = ItemTypeManager()
     private val viewMap = HashMap<View, Any>()
     private var touchView: View? = null
+    private var viewTouchInner: ViewTouchInner? = null
     private var touchViewManager: ViewHolderManager<Any>? = null
     private var enbleAreaInnerBase: BaseViewEnbleAreaInner? = null
     private val thisView = this
@@ -94,20 +95,23 @@ class SmartViewGroup : ViewGroup {
             MotionEvent.ACTION_DOWN -> {
                 touchView = getTouchView(x, y)
                 touchViewManager = itemTypeManager.getViewHolderManager(viewMap[touchView])
-                touchViewManager?.onClick(this, x, y, touchView!!)
+                viewTouchInner = if (touchViewManager != null && touchViewManager is ViewTouchInner) {
+                    touchViewManager as ViewTouchInner
+                } else null
+                viewTouchInner?.onClick(this, x, y, touchView!!)
             }
             MotionEvent.ACTION_MOVE -> {
 //                myLog("onMove__" + x + "__" + y)
-                touchViewManager?.onMove(this, x, y, touchView!!)
+                viewTouchInner?.onMove(this, x, y, touchView!!)
             }
             MotionEvent.ACTION_UP -> {
-                touchViewManager?.onActionUp(this, x, y, touchView!!)
+                viewTouchInner?.onActionUp(this, x, y, touchView!!)
             }
             MotionEvent.ACTION_CANCEL -> {
-                touchViewManager?.onActionCancle(this, x, y, touchView!!)
+                viewTouchInner?.onActionCancle(this, x, y, touchView!!)
             }
         }
-        return touchViewManager?.run {
+        return viewTouchInner?.run {
             isIntercept(
                 thisView,
                 x,
@@ -128,25 +132,32 @@ class SmartViewGroup : ViewGroup {
     }
 
     fun getTouchView(x: Float, y: Float): View? {
-        for (i in childCount - 1 downTo 0) {
-            val child = getChildAt(i)
-            if (touchView != null && touchView == child)
-                continue
-            if (child.visibility != View.GONE) {
-                val rect = Rect(child.left, child.top, child.right, child.bottom)
-                if (rect.contains(x.toInt(), y.toInt())) {
-                    return child
+        viewMap.iterator().forEach {
+            val child = it.key
+            myLog("getTouchView__" + child.left + "_" + child.top + "_" + child.right + "_" + child.bottom)
+            if (touchView != null && touchView == child) {
+
+            } else
+                if (child.visibility != View.GONE) {
+                    val rect = Rect(child.left, child.top, child.right, child.bottom)
+                    if (rect.contains(x.toInt(), y.toInt())) {
+//                    myLog("getTouchView__" + child.id + "__" + (if (touchView == null) "" else touchView!!.id.toString()))
+                        return child
+                    }
                 }
-            }
         }
         return null
     }
 
 
+    var viewId = 0
+
     fun addItem(t: Any) {
         val viewHolderManager = itemTypeManager.getViewHolderManager(t)
         viewHolderManager?.let {
             val view = LayoutInflater.from(context).inflate(it.itemLayoutId, null)
+            view.id = viewId
+            viewId++
             viewMap[view] = t
             addView(view)
         }
@@ -159,6 +170,5 @@ class SmartViewGroup : ViewGroup {
     fun getAreaEnbleInner(): BaseViewEnbleAreaInner? {
         return enbleAreaInnerBase
     }
-
 
 }
