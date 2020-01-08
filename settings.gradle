@@ -1,2 +1,2 @@
-include ':app',':smartviewgroup'
+include ':app',':smartviewgroup', ':photolibrary', ':mvvmlibrary'
 rootProject.name='SmartApp'

@@ -5,9 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.lzk.smartviewgroup.SmartViewGroup
-        android:id="@+id/smart_view_group"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/txt_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:text="哈哈" />
 </LinearLayout>

@@ -41,21 +41,28 @@ class SmartViewGroup : ViewGroup {
 
 
     override fun onLayout(p0: Boolean, p1: Int, p2: Int, p3: Int, p4: Int) {
-        if (!p0)
-            return
         for (i in 0 until childCount) {
             val view = getChildAt(i)
             if (view.visibility != View.GONE) {
-                val left = 0
-                val top = 0
+                val left = view.left
+                val top = view.top
                 val right = left + view.measuredWidth
                 val bottom = top + view.measuredHeight
-                myLog("onLayout__" + left + "__" + top + "__" + right + "__" + bottom)
+                myLog("onLayout__" + left + "__" + top + "__" + right + "__" + bottom + "__" + view.left + "__" + view.top)
                 view.layout(left, top, right, bottom)
-                val viewHolderManager = itemTypeManager.getViewHolderManager(viewMap[view])
-                viewHolderManager.onBindViewHolder(view, viewMap[view], thisView)
+                if (view.measuredWidth == 0 && view.measuredHeight == 0) {
+                    val viewHolderManager = itemTypeManager.getViewHolderManager(viewMap[view])
+                    viewHolderManager.onBindViewHolder(view, viewMap[view], thisView)
+                } else if (view.tag == null) {
+                    view.tag = "created"
+                    val viewHolderManager = itemTypeManager.getViewHolderManager(viewMap[view])
+                    viewHolderManager.onBindViewHolder(view, viewMap[view], thisView)
+                }
+
+
             }
         }
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -93,11 +100,13 @@ class SmartViewGroup : ViewGroup {
         val y: Float = ev?.y ?: 0f
         when (ev?.action) {
             MotionEvent.ACTION_DOWN -> {
+                touchView = null
                 touchView = getTouchView(x, y)
                 touchViewManager = itemTypeManager.getViewHolderManager(viewMap[touchView])
-                viewTouchInner = if (touchViewManager != null && touchViewManager is ViewTouchInner) {
-                    touchViewManager as ViewTouchInner
-                } else null
+                viewTouchInner =
+                    if (touchViewManager != null && touchViewManager is ViewTouchInner) {
+                        touchViewManager as ViewTouchInner
+                    } else null
                 viewTouchInner?.onClick(this, x, y, touchView!!)
             }
             MotionEvent.ACTION_MOVE -> {
@@ -132,19 +141,19 @@ class SmartViewGroup : ViewGroup {
     }
 
     fun getTouchView(x: Float, y: Float): View? {
-        viewMap.iterator().forEach {
-            val child = it.key
+        for (i in childCount - 1 downTo 0) {
+            val child = getChildAt(i)
             myLog("getTouchView__" + child.left + "_" + child.top + "_" + child.right + "_" + child.bottom)
-            if (touchView != null && touchView == child) {
+            if (touchView != null && touchView == child)
+                continue
 
-            } else
-                if (child.visibility != View.GONE) {
-                    val rect = Rect(child.left, child.top, child.right, child.bottom)
-                    if (rect.contains(x.toInt(), y.toInt())) {
+            if (child.visibility != View.GONE) {
+                val rect = Rect(child.left, child.top, child.right, child.bottom)
+                if (rect.contains(x.toInt(), y.toInt())) {
 //                    myLog("getTouchView__" + child.id + "__" + (if (touchView == null) "" else touchView!!.id.toString()))
-                        return child
-                    }
+                    return child
                 }
+            }
         }
         return null
     }
